@@ -71,6 +71,7 @@ class Main extends Phaser.State {
     this.SHOT_DELAY = 1500; // milliseconds (10 bullets/second)
     this.BULLET_SPEED = 500; // pixels/second
     this.NUMBER_OF_BULLETS = 100;
+		this.NUMBER_OF_EXPOLOSIONS = 100;
 
 		this.gun = this.spycar;
 
@@ -91,6 +92,25 @@ class Main extends Phaser.State {
         // Set its initial state to "dead".
         this.bullet.kill();
     }
+
+		//  An explosion pool
+    this.explosions = this.game.add.group();
+		for(var i = 0; i < this.NUMBER_OF_EXPLOSIONS; i++) {
+        // Create each bullet and add it to the group.
+        let explosion = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + (this.game.world.centerY / 2), 'spycar');
+				explosion.animations.add('explosion', [0, 1, 2, 3, 4, 5, 6], 10, false);
+
+        // Set its pivot point to the center of the bullet
+				explosion.anchor.setTo(0.5, 0.5);
+
+        // Set its initial state to "dead".
+        explosion.kill();
+
+				this.explosions.add(explosion);
+    }
+
+		// Set its initial state to "dead".
+		//this.explosion.kill();
 	}
 
 	shootBullet() {
@@ -217,8 +237,18 @@ class Main extends Phaser.State {
 	}
 
 	bulletCollision(bullet, car) {
+			this.explosion(car.position.x, car.position.y, this);
 			bullet.kill();
 			car.kill();
+
+	}
+
+	explosion(x, y, context) {
+		let explosion = context.explosions.getFirstDead(true);
+		explosion.position.x = x;
+		explosion.position.y = y;
+		explosion.revive();
+		explosion.animations.play('explosion');
 	}
 }
 
