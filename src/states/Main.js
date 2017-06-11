@@ -97,7 +97,7 @@ class Main extends Phaser.State {
     this.explosions = this.game.add.group();
 		for(var i = 0; i < this.NUMBER_OF_EXPLOSIONS; i++) {
         // Create each bullet and add it to the group.
-        let explosion = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + (this.game.world.centerY / 2), 'spycar');
+        let explosion = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + (this.game.world.centerY / 2), 'explosion');
 				explosion.animations.add('explosion', [0, 1, 2, 3, 4, 5, 6], 10, false);
 
         // Set its pivot point to the center of the bullet
@@ -238,6 +238,7 @@ class Main extends Phaser.State {
 
 	bulletCollision(bullet, car) {
 			this.explosion(car.position.x, car.position.y, this);
+			this.carExploding.play();
 			bullet.kill();
 			car.kill();
 
