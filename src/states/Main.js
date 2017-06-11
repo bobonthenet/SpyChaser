@@ -10,6 +10,7 @@ class Main extends Phaser.State {
 		this.DRAG = 50;
 
 		this.carExploding = this.game.add.audio('carExploding');
+		this.carCrash = this.game.add.audio('carCrash');
 
 		this.lineCreate = false;
 
@@ -226,9 +227,15 @@ class Main extends Phaser.State {
 	}
 
 	carCollision(car1, car2) {
+		this.carCrash.play();
 		let timer1 = this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
 			this.carExploding.play();
 			car1.kill();
+			if(this.spycar.alive == false) {
+				this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
+					this.game.state.start("Main");
+				}, this);
+			}
 		}, this);
 		let timer2 = this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
 			this.carExploding.play();

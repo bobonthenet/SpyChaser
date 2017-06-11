@@ -10,6 +10,7 @@ class Preload extends Phaser.State {
 		this.game.load.spritesheet('enemycar', 'assets/enemycar.png', 208, 444);
 		this.game.load.spritesheet('explosion', 'assets/explosion.png', 56, 49);
 		this.game.load.audio('carExploding', 'assets/ChunkyExplosion.mp3');
+		this.game.load.audio('carCrash', 'assets/CarCrash.ogg');
 	}
 
 	create() {
