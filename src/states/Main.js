@@ -76,6 +76,7 @@ class Main extends Phaser.State {
     this.SHOT_DELAY = 1500; // milliseconds (10 bullets/second)
     this.BULLET_SPEED = 500; // pixels/second
     this.NUMBER_OF_BULLETS = 100;
+		this.NUMBER_OF_EXPOLOSIONS = 100;
 
 		this.gun = this.spycar;
 
@@ -96,6 +97,15 @@ class Main extends Phaser.State {
         // Set its initial state to "dead".
         this.bullet.kill();
     }
+
+		//  An explosion pool
+    this.explosions = this.game.add.group();
+		for (var i = 0; i < 10; i++)
+		{
+				var explosionAnimation = this.explosions.create(0, 0, 'explosion', [0], false);
+				explosionAnimation.anchor.setTo(0.5, 0.5);
+				explosionAnimation.animations.add('explosion');
+		}
 	}
 
 	shootBullet() {
@@ -212,10 +222,15 @@ class Main extends Phaser.State {
 	}
 
 	carCollision(car1, car2) {
+
 		this.carCrash.play();
 		let timer1 = this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
-			this.carExploding.play();
-			car1.kill();
+
+			if (car1.alive) {
+				this.carExplosion(car1);
+				car1.kill();
+			}
+
 			if(this.spycar.alive == false) {
 				this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
 					this.game.state.start("Main");
@@ -223,16 +238,27 @@ class Main extends Phaser.State {
 			}
 		}, this);
 		let timer2 = this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
-			this.carExploding.play();
-			car2.kill();
+			if (car2.alive) {
+				this.carExplosion(car2);
+				car2.kill();
+			}
 		}, this);
 	}
 
 	bulletCollision(bullet, car) {
+			this.carExplosion(car);
 			bullet.kill();
 			car.kill();
 			this.score++;
 			this.scoreText.text = this.scoreString + this.score;
+	}
+
+	carExplosion(car) {
+		var explosionAnimation = this.explosions.getFirstExists(false);
+		explosionAnimation.scale.setTo(2);
+		explosionAnimation.reset(car.x, car.y);
+		explosionAnimation.play('explosion', 24, false, true);
+		this.carExploding.play();
 	}
 }
 
