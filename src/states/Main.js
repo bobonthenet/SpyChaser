@@ -9,6 +9,10 @@ class Main extends Phaser.State {
 		this.ACCELERATION = 200;
 		this.DRAG = 50;
 
+		this.score = 0;
+		this.scoreString = 'Score : ';
+    this.scoreText = this.game.add.text(10, 10, this.scoreString + this.score, { font: '34px Arial', fill: '#fff' });
+
 		this.carExploding = this.game.add.audio('carExploding');
 		this.carCrash = this.game.add.audio('carCrash');
 
@@ -137,6 +141,7 @@ class Main extends Phaser.State {
 
 	update() {
 
+
 		this.game.physics.arcade.collide(this.enemies, this.enemies, this.carCollision, null, this);
 		this.game.physics.arcade.collide(this.spycar, this.enemies, this.carCollision, null, this);
 		this.game.physics.arcade.overlap(this.bullet, this.enemies, this.bulletCollision, null, this);
@@ -244,6 +249,8 @@ class Main extends Phaser.State {
 			this.carExplosion(car);
 			bullet.kill();
 			car.kill();
+			this.score++;
+			this.scoreText.text = this.scoreString + this.score;
 	}
 
 	carExplosion(car) {
