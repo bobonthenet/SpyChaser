@@ -15,6 +15,8 @@ class Main extends Phaser.State {
 
 		this.carExploding = this.game.add.audio('carExploding');
 		this.carCrash = this.game.add.audio('carCrash');
+		this.music = this.game.add.audio('music');
+		this.game.sound.setDecodedCallback(this.music, function(){ this.music.loopFull(0.6); }, this);
 
 		this.lineCreate = false;
 
@@ -170,7 +172,7 @@ class Main extends Phaser.State {
 			this.shootBullet();
 		}
 
-		this.road.tilePosition.y += 5;
+		this.road.tilePosition.y += 7;
 
 		this.spycar.body.acceleration.x = 0;
   	this.spycar.body.acceleration.y = 0;
@@ -233,6 +235,7 @@ class Main extends Phaser.State {
 
 			if(this.spycar.alive == false) {
 				this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
+					this.music.stop();
 					this.game.state.start("Main");
 				}, this);
 			}

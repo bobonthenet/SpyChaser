@@ -7,7 +7,7 @@ export default class RoadLine extends Phaser.Sprite {
 	}
 
 	update() {
-		this.position.y += 5;
+		this.position.y += 7;
 
 		if(this.position.y > this.game.camera.view.bottom) {
 			this.kill();
