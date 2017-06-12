@@ -96,22 +96,12 @@ class Main extends Phaser.State {
 
 		//  An explosion pool
     this.explosions = this.game.add.group();
-		for(var i = 0; i < this.NUMBER_OF_EXPLOSIONS; i++) {
-        // Create each bullet and add it to the group.
-        let explosion = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + (this.game.world.centerY / 2), 'explosion');
-				explosion.animations.add('explosion', [0, 1, 2, 3, 4, 5, 6], 10, false);
-
-        // Set its pivot point to the center of the bullet
-				explosion.anchor.setTo(0.5, 0.5);
-
-        // Set its initial state to "dead".
-        explosion.kill();
-
-				this.explosions.add(explosion);
-    }
-
-		// Set its initial state to "dead".
-		//this.explosion.kill();
+		for (var i = 0; i < 10; i++)
+		{
+				var explosionAnimation = this.explosions.create(0, 0, 'explosion', [0], false);
+				explosionAnimation.anchor.setTo(0.5, 0.5);
+				explosionAnimation.animations.add('explosion');
+		}
 	}
 
 	shootBullet() {
@@ -227,10 +217,15 @@ class Main extends Phaser.State {
 	}
 
 	carCollision(car1, car2) {
+
 		this.carCrash.play();
 		let timer1 = this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
-			this.carExploding.play();
-			car1.kill();
+
+			if (car1.alive) {
+				this.carExplosion(car1);
+				car1.kill();
+			}
+
 			if(this.spycar.alive == false) {
 				this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
 					this.game.state.start("Main");
@@ -238,25 +233,25 @@ class Main extends Phaser.State {
 			}
 		}, this);
 		let timer2 = this.game.time.events.add(Phaser.Timer.SECOND * 1, function() {
-			this.carExploding.play();
-			car2.kill();
+			if (car2.alive) {
+				this.carExplosion(car2);
+				car2.kill();
+			}
 		}, this);
 	}
 
 	bulletCollision(bullet, car) {
-			this.explosion(car.position.x, car.position.y, this);
-			this.carExploding.play();
+			this.carExplosion(car);
 			bullet.kill();
 			car.kill();
-
 	}
 
-	explosion(x, y, context) {
-		let explosion = context.explosions.getFirstDead(true);
-		explosion.position.x = x;
-		explosion.position.y = y;
-		explosion.revive();
-		explosion.animations.play('explosion');
+	carExplosion(car) {
+		var explosionAnimation = this.explosions.getFirstExists(false);
+		explosionAnimation.scale.setTo(2);
+		explosionAnimation.reset(car.x, car.y);
+		explosionAnimation.play('explosion', 24, false, true);
+		this.carExploding.play();
 	}
 }
 
